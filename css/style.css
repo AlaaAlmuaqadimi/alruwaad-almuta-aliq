@@ -470,6 +470,104 @@
       color: var(--accent);
       font-weight: 600;
     }
+/* ABOUT extras (new layout elements) */
+.about-bullets{
+  margin-top: 1.2rem;
+  display: grid;
+  gap: .7rem;
+}
+
+.about-bullet{
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: .6rem;
+  align-items: start;
+  padding: .75rem .85rem;
+  border-radius: 16px;
+  border: 1px solid var(--border-soft);
+  background: rgba(5,6,10,0.55);
+}
+
+.about-dot{
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(214,17,17,0.18);
+  border: 1px solid rgba(214,17,17,0.45);
+  color: var(--accent);
+  font-weight: 800;
+  font-size: .85rem;
+}
+
+.about-bullet b{
+  display:block;
+  margin-bottom: 2px;
+  color: var(--accent);
+}
+
+.about-bullet span{
+  color: var(--text-muted);
+  font-size: .85rem;
+}
+
+.about-pills{
+  margin-top: 1rem;
+  display:flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.about-pill{
+  font-size: .75rem;
+  padding: .18rem .7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(140,185,221,0.45);
+  background: rgba(140,185,221,0.10);
+  color: var(--accent);
+}
+
+.about-side-head{
+  margin-bottom: .6rem;
+}
+
+.about-side-title{
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--text-main);
+}
+
+.about-side-sub{
+  color: var(--text-muted);
+  font-size: .82rem;
+  margin-top: .15rem;
+}
+
+.about-side-card{
+  border-radius: 18px;
+  border: 1px solid var(--border-soft);
+  background: rgba(5,6,10,0.55);
+  padding: 1rem;
+}
+
+.about-side-row{
+  display:flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .8rem;
+  font-size: .9rem;
+}
+
+.about-side-row a{
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.about-side-btn{
+  width: 100%;
+  margin-top: .9rem;
+}
 
     .badge-soft {
       padding: 0.2rem 0.7rem;
