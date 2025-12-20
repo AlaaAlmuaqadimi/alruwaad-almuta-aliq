@@ -24,51 +24,58 @@
         }
       });
     }); 
+  
+function showToast() {
+  const t = document.getElementById("toastCenter");
+  if (!t) { console.error("toastCenter not found"); return; }
 
-    
-  function showToast(msg = "تم الإرسال بنجاح ✅", type = "success") {
-    // إذا عندك توست جاهز في الصفحة استعمله، إذا لا شوف الكود رقم (2) تحت.
-    const toast = document.getElementById("toast");
-    const toastMsg = document.getElementById("toastMsg");
+  // كسر أي display:none جاي من CSS/JS آخر
+  t.style.display = "grid";     // لأن CSS عندك display:grid
+  t.classList.add("show");
 
-    if (!toast || !toastMsg) {
-      console.log(msg); // fallback بدون alert
-      return;
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => {
+    t.classList.remove("show");
+    // اختياري: ما ترجعش display none، خليه ثابت وسيختفي بالـ opacity/visibility
+    // t.style.display = "";
+  }, 3000);
+}
+
+
+
+  async function submitForm() {
+    const form = document.getElementById("contactForm");
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+
+    try {
+      const res = await fetch("/send_email.php", {
+        method: "POST",
+        body: new FormData(form)
+      });
+
+      const data = await res.json();
+
+      if (data.ok) {
+        showToast();
+        form.reset();
+      } else {
+        alert(data.error || "صار خطأ أثناء الإرسال");
+      }
+    } catch (e) {
+      alert("تعذر الاتصال بالسيرفر.");
+    } finally {
+      btn.disabled = false;
     }
-
-    toastMsg.textContent = msg;
-
-    // لون حسب الحالة (اختياري)
-    toast.classList.remove("toast-success", "toast-error");
-    toast.classList.add(type === "error" ? "toast-error" : "toast-success");
-
-    toast.classList.add("show");
-    clearTimeout(window.__toastTimer);
-    window.__toastTimer = setTimeout(() => toast.classList.remove("show"), 2500);
-  }
-
-  function submitForm() {
-    const form = document.querySelector(".contact-form-card form");
-
-    const formData = new FormData(form);
-
-    fetch("send_email.php", {
-      method: "POST",
-      body: formData
-    })
-    .then(async (res) => {
-      const text = await res.text();
-
-      // إذا PHP رجّع خطأ (HTTP 400/500)
-      if (!res.ok) throw new Error(text || "فشل الإرسال");
-
-      // نجاح
-      showToast(text || "تم إرسال طلبك بنجاح ✅", "success");
-      form.reset();
-    })
-    .catch((err) => {
-      // ❌ بدون alert — توست خطأ فقط
-      showToast(err.message || "حدث خطأ أثناء الإرسال ❌", "error");
-    });
   } 
+
+  document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("contactForm");
+  if (!form) return;
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    submitForm();
+  });
+});
 

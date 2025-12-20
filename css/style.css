@@ -1160,8 +1160,7 @@
   display: grid;
   place-items: center;
   background: rgba(17,24,39,.35);
-  backdrop-filter: blur(4px);
-  opacity: 0;
+  backdrop-filter: blur(4px); 
   pointer-events: none;
   transition: opacity 300ms ease;
   z-index: 9999;

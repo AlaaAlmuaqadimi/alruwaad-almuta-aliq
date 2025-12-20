@@ -1,49 +1,54 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+header('Content-Type: application/json; charset=UTF-8');
 
-    // استقبال البيانات من الفورم (مطابقة لأسماء الحقول name="")
-    $name    = trim($_POST['name'] ?? '');
-    $phone   = trim($_POST['phone'] ?? '');
-    $vehicle = trim($_POST['vehicle'] ?? '');
-    $budget  = trim($_POST['budget'] ?? '');
-    $message = trim($_POST['message'] ?? '');
-
-    // تحقق بسيط
-    if ($name === '' || $phone === '') {
-        http_response_code(400);
-        echo "الاسم ورقم الهاتف مطلوبين.";
-        exit;
-    }
-
-    $to      = "info@rwadcars.ly";
-    $subject = "طلب جديد من الموقع - الرواد المتألق";
-
-    // (اختياري) من الأفضل يكون من نفس الدومين في الاستضافة
-    $from = "info@rwadcars.ly";
-
-    $headers  = "From: $from\r\n";
-    $headers .= "Reply-To: $from\r\n";
-    $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-    $body =
-        "طلب جديد من الموقع\n\n" .
-        "الاسم: $name\n" .
-        "الهاتف: $phone\n" .
-        "نوع المركبة: $vehicle\n" .
-        "الميزانية: $budget\n\n" .
-        "تفاصيل إضافية:\n$message\n";
-
-    // إرسال الإيميل
-    $sent = mail($to, $subject, $body, $headers);
-
-    if ($sent) {
-        // رجّع المستخدم لصفحة شكراً (اختياري)
-        // header("Location: thankyou.html"); exit;
-
-        echo "تم إرسال طلبك بنجاح.";
-    } else {
-        http_response_code(500);
-        echo "حدث خطأ أثناء الإرسال. حاول مرة أخرى.";
-    }
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    echo json_encode([
+        "ok" => false,
+        "error" => "Invalid request method"
+    ]);
+    exit;
 }
-?>
+
+// استقبال البيانات من الفورم
+$name    = trim($_POST['name'] ?? '');
+$phone   = trim($_POST['phone'] ?? '');
+$vehicle = trim($_POST['vehicle'] ?? '');
+$budget  = trim($_POST['budget'] ?? '');
+$message = trim($_POST['message'] ?? '');
+
+// تحقق بسيط
+if ($name === '' || $phone === '') {
+    echo json_encode([
+        "ok" => false,
+        "error" => "الاسم ورقم الهاتف مطلوبين"
+    ]);
+    exit;
+}
+
+// إعدادات البريد
+$to      = "info@rwadcars.ly";          // يستقبل الطلبات
+$from    = "rwadcars@rwadcars.ly";      // مرسل من نفس الدومين
+$subject = "طلب جديد من الموقع - الرواد المتألق";
+
+// Headers
+$headers  = "From: الرواد المتألق <$from>\r\n";
+$headers .= "Reply-To: $to\r\n";
+$headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+
+// محتوى الرسالة
+$body =
+    "طلب جديد من الموقع\n\n" .
+    "الاسم: $name\n" .
+    "رقم الهاتف: $phone\n" .
+    "نوع المركبة: " . ($vehicle !== '' ? $vehicle : "غير محدد") . "\n" .
+    "الميزانية: " . ($budget !== '' ? $budget : "غير محددة") . "\n\n" .
+    "تفاصيل إضافية:\n$message\n";
+
+// إرسال البريد
+$sent = mail($to, $subject, $body, $headers);
+
+// رد JSON للـ JavaScript
+echo json_encode([
+    "ok"    => $sent,
+    "error" => $sent ? null : "فشل إرسال البريد، يرجى المحاولة لاحقًا"
+]);
